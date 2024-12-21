@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+option go_package = "./;modelx";
+
+package model;
+
+// The greeting service definition.
+service Modelx {
+  rpc Ping (PingRequest) returns (PongReply) {}
+
+  // generate embedding vector for passed sentence.
+  rpc GenEmbedding(EmbeddingRequest) returns (EmbeddingReply) {}
+
+  // bulk generate embedding vectors.
+  rpc GenEmbeddingList(EmbeddingListRequest) returns (EmbeddingListReply) {}
+
+  // calc similarity score for sentence.
+  rpc CalcSimilarityScore(SimilarityRequest) returns (SimilarityReply) {}
+
+  // extract keywords from input.
+  rpc ExtractKeywords(ExtractKeywordsRequest) returns (ExtractKeywordsReply) {}
+}
+
+message PingRequest {
+}
+
+message PongReply {
+  int32 code = 1 [json_name = "code"];
+}
+
+message EmbeddingRequest {
+  string text = 1 [json_name = "text"];
+  string model_name = 2 [json_name = "model_name"];
+}
+
+message EmbeddingReply {
+  string embedding = 1 [json_name = "embedding"];
+}
+
+message EmbeddingListRequest {
+  repeated string text_list = 1 [json_name = "text_list"];
+  string model_name = 2 [json_name = "model_name"];
+}
+
+message EmbeddingListReply {
+  repeated string embedding_list = 1 [json_name = "embedding_list"];
+}
+
+message SimilarityRequest {
+  string source_text = 1 [json_name = "source_text"];
+  repeated string target_texts = 2 [json_name = "target_texts"];
+  string model_name = 3 [json_name = "model_name"];
+}
+
+message SimilarityReply {
+  repeated double scores = 1 [json_name = "scores"];
+}
+
+message ClassifyRequest {
+  string text = 1 [json_name = "text"];
+  repeated string labels = 2 [json_name = "labels"];
+}
+
+message ClassifyReply {
+  repeated string labels = 1 [json_name = "labels"];
+  repeated double scores = 2 [json_name = "scores"];
+}
+
+message ExtractKeywordsRequest {
+  string text = 1 [json_name = "text"];
+}
+
+message ExtractKeywordsReply {
+  repeated string keywords = 1 [json_name = "keywords"];
+}

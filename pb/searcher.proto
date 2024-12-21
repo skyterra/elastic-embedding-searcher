@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package proto.searcher;
+
+option go_package = "../pb/searcher;searcher";
+
+service ElasticEmbeddingSearcherApi {
+  // health check.
+  rpc Ping (PingRequest) returns (PongResponse) {};
+}
+
+// health check request.
+message PingRequest {
+
+}
+
+message PongResponse {
+  string status = 1;
+}
