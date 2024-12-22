@@ -23,7 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ElasticEmbeddingSearcherApiClient interface {
 	// health check.
-	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PongResponse, error)
+	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	// indexes csv file data into elasticsearch.
+	IndexCsvFile(ctx context.Context, in *IndexCsvRequest, opts ...grpc.CallOption) (*IndexCsvResponse, error)
+	// query base on semantic search.
+	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
 }
 
 type elasticEmbeddingSearcherApiClient struct {
@@ -34,9 +38,27 @@ func NewElasticEmbeddingSearcherApiClient(cc grpc.ClientConnInterface) ElasticEm
 	return &elasticEmbeddingSearcherApiClient{cc}
 }
 
-func (c *elasticEmbeddingSearcherApiClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PongResponse, error) {
-	out := new(PongResponse)
+func (c *elasticEmbeddingSearcherApiClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+	out := new(PingResponse)
 	err := c.cc.Invoke(ctx, "/proto.searcher.ElasticEmbeddingSearcherApi/Ping", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *elasticEmbeddingSearcherApiClient) IndexCsvFile(ctx context.Context, in *IndexCsvRequest, opts ...grpc.CallOption) (*IndexCsvResponse, error) {
+	out := new(IndexCsvResponse)
+	err := c.cc.Invoke(ctx, "/proto.searcher.ElasticEmbeddingSearcherApi/IndexCsvFile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *elasticEmbeddingSearcherApiClient) Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error) {
+	out := new(QueryResponse)
+	err := c.cc.Invoke(ctx, "/proto.searcher.ElasticEmbeddingSearcherApi/Query", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +70,11 @@ func (c *elasticEmbeddingSearcherApiClient) Ping(ctx context.Context, in *PingRe
 // for forward compatibility
 type ElasticEmbeddingSearcherApiServer interface {
 	// health check.
-	Ping(context.Context, *PingRequest) (*PongResponse, error)
+	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	// indexes csv file data into elasticsearch.
+	IndexCsvFile(context.Context, *IndexCsvRequest) (*IndexCsvResponse, error)
+	// query base on semantic search.
+	Query(context.Context, *QueryRequest) (*QueryResponse, error)
 	mustEmbedUnimplementedElasticEmbeddingSearcherApiServer()
 }
 
@@ -56,8 +82,14 @@ type ElasticEmbeddingSearcherApiServer interface {
 type UnimplementedElasticEmbeddingSearcherApiServer struct {
 }
 
-func (UnimplementedElasticEmbeddingSearcherApiServer) Ping(context.Context, *PingRequest) (*PongResponse, error) {
+func (UnimplementedElasticEmbeddingSearcherApiServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedElasticEmbeddingSearcherApiServer) IndexCsvFile(context.Context, *IndexCsvRequest) (*IndexCsvResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IndexCsvFile not implemented")
+}
+func (UnimplementedElasticEmbeddingSearcherApiServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
 }
 func (UnimplementedElasticEmbeddingSearcherApiServer) mustEmbedUnimplementedElasticEmbeddingSearcherApiServer() {
 }
@@ -91,6 +123,42 @@ func _ElasticEmbeddingSearcherApi_Ping_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ElasticEmbeddingSearcherApi_IndexCsvFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IndexCsvRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ElasticEmbeddingSearcherApiServer).IndexCsvFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.searcher.ElasticEmbeddingSearcherApi/IndexCsvFile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ElasticEmbeddingSearcherApiServer).IndexCsvFile(ctx, req.(*IndexCsvRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ElasticEmbeddingSearcherApi_Query_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ElasticEmbeddingSearcherApiServer).Query(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.searcher.ElasticEmbeddingSearcherApi/Query",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ElasticEmbeddingSearcherApiServer).Query(ctx, req.(*QueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ElasticEmbeddingSearcherApi_ServiceDesc is the grpc.ServiceDesc for ElasticEmbeddingSearcherApi service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -101,6 +169,14 @@ var ElasticEmbeddingSearcherApi_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _ElasticEmbeddingSearcherApi_Ping_Handler,
+		},
+		{
+			MethodName: "IndexCsvFile",
+			Handler:    _ElasticEmbeddingSearcherApi_IndexCsvFile_Handler,
+		},
+		{
+			MethodName: "Query",
+			Handler:    _ElasticEmbeddingSearcherApi_Query_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

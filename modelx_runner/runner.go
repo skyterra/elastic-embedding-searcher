@@ -1,4 +1,4 @@
-package emb
+package modelx_runner
 
 import (
 	"context"
@@ -113,8 +113,8 @@ func ParseEmbeddingVectors(contents []string) ([][]float64, error) {
 }
 
 // GenEmbeddingList generate embedding vectors by passing model.
-func GenEmbeddingList(ctx context.Context, modelName string, annotations []string) ([][]float64, error) {
-	reply, err := GetClient().GenEmbeddingList(ctx, &pb.EmbeddingListRequest{TextList: annotations, ModelName: modelName})
+func GenEmbeddingList(ctx context.Context, annotations []string) ([][]float64, error) {
+	reply, err := GetClient().GenEmbeddingList(ctx, &pb.EmbeddingListRequest{TextList: annotations})
 	if err != nil {
 		return nil, err
 	}
@@ -127,9 +127,9 @@ func GenEmbeddingList(ctx context.Context, modelName string, annotations []strin
 	return embeddingList, nil
 }
 
-// GenEmbedding generate embedding vector by passing model.
-func GenEmbedding(ctx context.Context, modelName string, text string) ([]float64, error) {
-	reply, err := GetClient().GenEmbedding(ctx, &pb.EmbeddingRequest{Text: text, ModelName: modelName})
+// GenEmbedding generate embedding vector.
+func GenEmbedding(ctx context.Context, text string) ([]float64, error) {
+	reply, err := GetClient().GenEmbedding(ctx, &pb.EmbeddingRequest{Text: text})
 	if err != nil {
 		return nil, err
 	}
@@ -142,22 +142,11 @@ func GenEmbedding(ctx context.Context, modelName string, text string) ([]float64
 	return embedding, nil
 }
 
-// GenStringEmbedding generates an embedding vector for a given text and index name.
-func GenStringEmbedding(ctx context.Context, modelName string, text string) (string, error) {
-	reply, err := GetClient().GenEmbedding(ctx, &pb.EmbeddingRequest{Text: text, ModelName: modelName})
-	if err != nil {
-		return "", err
-	}
-
-	return reply.Embedding, nil
-}
-
 // CalcSimilarityScore calc similarity score about sourceText and targetTexts.
 func CalcSimilarityScore(ctx context.Context, modelName string, sourceText string, targetTexts []string) ([]float64, error) {
 	reply, err := GetClient().CalcSimilarityScore(ctx, &pb.SimilarityRequest{
 		SourceText:  sourceText,
 		TargetTexts: targetTexts,
-		ModelName:   modelName,
 	})
 
 	if err != nil {
@@ -167,21 +156,16 @@ func CalcSimilarityScore(ctx context.Context, modelName string, sourceText strin
 	return reply.Scores, nil
 }
 
-func SplitSubSentences(annotation string, maxWordCount int, sep string) []string {
-	annotation = strings.Trim(annotation, sep)
-	words := strings.Split(annotation, sep)
-
-	// words count match requirement.
-	if len(words) <= maxWordCount {
-		return []string{annotation}
+// EmbeddingToString converts a slice of float64 embeddings to a comma-separated string.
+func EmbeddingToString(input []float64) string {
+	if len(input) == 0 {
+		return ""
 	}
 
-	var subSentences []string
-
-	// group words by maxWordCount.
-	for i := 0; i <= len(words)-maxWordCount; i += maxWordCount {
-		subSentences = append(subSentences, strings.Join(words[i:i+maxWordCount], sep))
+	result := strconv.FormatFloat(input[0], 'f', -1, 64)
+	for _, v := range input[1:] {
+		result += "," + strconv.FormatFloat(v, 'f', -1, 64)
 	}
 
-	return subSentences
+	return result
 }

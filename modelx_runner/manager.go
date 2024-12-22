@@ -1,4 +1,4 @@
-package emb
+package modelx_runner
 
 import (
 	"context"
@@ -37,6 +37,9 @@ func (m *ModelXManager) fork() error {
 
 	// fork modelx process. it is too slow...
 	cmd := exec.Command(python, m.cmdPath, "--max_workers", strconv.Itoa(m.workers), "--uds", "True", "--model_path", m.modelPath)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
 	if err := cmd.Start(); err != nil {
 		return err
 	}
@@ -46,7 +49,7 @@ func (m *ModelXManager) fork() error {
 	signal.Notify(sigReady, syscall.SIGUSR1)
 	defer signal.Stop(sigReady)
 
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(20 * time.Second)
 	defer ticker.Stop()
 
 	select {

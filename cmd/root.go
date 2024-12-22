@@ -18,7 +18,7 @@ var rootCmd = &cobra.Command{
 			return nil
 		}
 
-		elasticAddress, err := cmd.Flags().GetString("elastic-address")
+		addr, err := cmd.Flags().GetString("elastic-address")
 		if err != nil {
 			return err
 		}
@@ -33,8 +33,8 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		// init es.
-		if err = elastic.Init(elasticAddress); err != nil {
+		// init elastic search without username and password.
+		if err = elastic.Init(addr, "", ""); err != nil {
 			return err
 		}
 

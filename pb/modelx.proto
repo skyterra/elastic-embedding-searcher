@@ -16,60 +16,37 @@ service Modelx {
 
   // calc similarity score for sentence.
   rpc CalcSimilarityScore(SimilarityRequest) returns (SimilarityReply) {}
-
-  // extract keywords from input.
-  rpc ExtractKeywords(ExtractKeywordsRequest) returns (ExtractKeywordsReply) {}
 }
 
 message PingRequest {
 }
 
 message PongReply {
-  int32 code = 1 [json_name = "code"];
+  int32 code = 1;
 }
 
 message EmbeddingRequest {
-  string text = 1 [json_name = "text"];
-  string model_name = 2 [json_name = "model_name"];
+  string text = 1;
 }
 
 message EmbeddingReply {
-  string embedding = 1 [json_name = "embedding"];
+  string embedding = 1;
 }
 
 message EmbeddingListRequest {
-  repeated string text_list = 1 [json_name = "text_list"];
-  string model_name = 2 [json_name = "model_name"];
+  repeated string text_list = 1;
 }
 
 message EmbeddingListReply {
-  repeated string embedding_list = 1 [json_name = "embedding_list"];
+  repeated string embedding_list = 1;
 }
 
 message SimilarityRequest {
-  string source_text = 1 [json_name = "source_text"];
-  repeated string target_texts = 2 [json_name = "target_texts"];
-  string model_name = 3 [json_name = "model_name"];
+  string source_text = 1;
+  repeated string target_texts = 2;
 }
 
 message SimilarityReply {
-  repeated double scores = 1 [json_name = "scores"];
+  repeated double scores = 1;
 }
 
-message ClassifyRequest {
-  string text = 1 [json_name = "text"];
-  repeated string labels = 2 [json_name = "labels"];
-}
-
-message ClassifyReply {
-  repeated string labels = 1 [json_name = "labels"];
-  repeated double scores = 2 [json_name = "scores"];
-}
-
-message ExtractKeywordsRequest {
-  string text = 1 [json_name = "text"];
-}
-
-message ExtractKeywordsReply {
-  repeated string keywords = 1 [json_name = "keywords"];
-}

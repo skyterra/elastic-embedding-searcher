@@ -29,8 +29,6 @@ type ModelxClient interface {
 	GenEmbeddingList(ctx context.Context, in *EmbeddingListRequest, opts ...grpc.CallOption) (*EmbeddingListReply, error)
 	// calc similarity score for sentence.
 	CalcSimilarityScore(ctx context.Context, in *SimilarityRequest, opts ...grpc.CallOption) (*SimilarityReply, error)
-	// extract keywords from input.
-	ExtractKeywords(ctx context.Context, in *ExtractKeywordsRequest, opts ...grpc.CallOption) (*ExtractKeywordsReply, error)
 }
 
 type modelxClient struct {
@@ -77,15 +75,6 @@ func (c *modelxClient) CalcSimilarityScore(ctx context.Context, in *SimilarityRe
 	return out, nil
 }
 
-func (c *modelxClient) ExtractKeywords(ctx context.Context, in *ExtractKeywordsRequest, opts ...grpc.CallOption) (*ExtractKeywordsReply, error) {
-	out := new(ExtractKeywordsReply)
-	err := c.cc.Invoke(ctx, "/model.Modelx/ExtractKeywords", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ModelxServer is the server API for Modelx service.
 // All implementations must embed UnimplementedModelxServer
 // for forward compatibility
@@ -97,8 +86,6 @@ type ModelxServer interface {
 	GenEmbeddingList(context.Context, *EmbeddingListRequest) (*EmbeddingListReply, error)
 	// calc similarity score for sentence.
 	CalcSimilarityScore(context.Context, *SimilarityRequest) (*SimilarityReply, error)
-	// extract keywords from input.
-	ExtractKeywords(context.Context, *ExtractKeywordsRequest) (*ExtractKeywordsReply, error)
 	mustEmbedUnimplementedModelxServer()
 }
 
@@ -117,9 +104,6 @@ func (UnimplementedModelxServer) GenEmbeddingList(context.Context, *EmbeddingLis
 }
 func (UnimplementedModelxServer) CalcSimilarityScore(context.Context, *SimilarityRequest) (*SimilarityReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CalcSimilarityScore not implemented")
-}
-func (UnimplementedModelxServer) ExtractKeywords(context.Context, *ExtractKeywordsRequest) (*ExtractKeywordsReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ExtractKeywords not implemented")
 }
 func (UnimplementedModelxServer) mustEmbedUnimplementedModelxServer() {}
 
@@ -206,24 +190,6 @@ func _Modelx_CalcSimilarityScore_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Modelx_ExtractKeywords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ExtractKeywordsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ModelxServer).ExtractKeywords(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/model.Modelx/ExtractKeywords",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ModelxServer).ExtractKeywords(ctx, req.(*ExtractKeywordsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Modelx_ServiceDesc is the grpc.ServiceDesc for Modelx service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -246,10 +212,6 @@ var Modelx_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CalcSimilarityScore",
 			Handler:    _Modelx_CalcSimilarityScore_Handler,
-		},
-		{
-			MethodName: "ExtractKeywords",
-			Handler:    _Modelx_ExtractKeywords_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6,7 +6,16 @@ option go_package = "../pb/searcher;searcher";
 
 service ElasticEmbeddingSearcherApi {
   // health check.
-  rpc Ping (PingRequest) returns (PongResponse) {};
+  rpc Ping (PingRequest) returns (PingResponse) {
+  };
+
+  // indexes csv file data into elasticsearch.
+  rpc IndexCsvFile(IndexCsvRequest) returns (IndexCsvResponse) {
+  };
+
+  // query base on semantic search.
+  rpc Query(QueryRequest) returns (QueryResponse) {
+  };
 }
 
 // health check request.
@@ -14,6 +23,36 @@ message PingRequest {
 
 }
 
-message PongResponse {
-  string status = 1;
+message PingResponse {
+  string message = 1;
+}
+
+
+// upload csv file and index its content into ES.
+message IndexCsvRequest {
+  string index_name = 1;
+  string reset_index = 2; // "reset" reset index; "append" append to index;
+  string embedding_column = 3;
+  bytes file_data = 4;
+}
+
+message IndexCsvResponse {
+  string message = 1;
+}
+
+message Record {
+  string id = 1;
+  double score= 2;
+  map<string,string> metadata = 3;
+}
+
+message QueryRequest {
+  string query_text = 1;
+  string index_name = 2;
+  int32 size = 3;
+}
+
+message QueryResponse {
+  string message = 1;
+  repeated Record records = 2;
 }

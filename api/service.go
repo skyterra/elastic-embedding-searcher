@@ -9,6 +9,6 @@ type SearcherServer struct {
 	pb.UnimplementedElasticEmbeddingSearcherApiServer
 }
 
-func (s *SearcherServer) Ping(ctx context.Context, req *pb.PingRequest) (*pb.PongResponse, error) {
-	return &pb.PongResponse{Status: "Pong"}, nil
+func (s *SearcherServer) Ping(ctx context.Context, req *pb.PingRequest) (*pb.PingResponse, error) {
+	return &pb.PingResponse{Message: "pong"}, nil
 }

@@ -60,11 +60,6 @@ class ModelxStub(object):
                 request_serializer=modelx__pb2.SimilarityRequest.SerializeToString,
                 response_deserializer=modelx__pb2.SimilarityReply.FromString,
                 _registered_method=True)
-        self.ExtractKeywords = channel.unary_unary(
-                '/model.Modelx/ExtractKeywords',
-                request_serializer=modelx__pb2.ExtractKeywordsRequest.SerializeToString,
-                response_deserializer=modelx__pb2.ExtractKeywordsReply.FromString,
-                _registered_method=True)
 
 
 class ModelxServicer(object):
@@ -98,13 +93,6 @@ class ModelxServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ExtractKeywords(self, request, context):
-        """extract keywords from input.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_ModelxServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -127,11 +115,6 @@ def add_ModelxServicer_to_server(servicer, server):
                     servicer.CalcSimilarityScore,
                     request_deserializer=modelx__pb2.SimilarityRequest.FromString,
                     response_serializer=modelx__pb2.SimilarityReply.SerializeToString,
-            ),
-            'ExtractKeywords': grpc.unary_unary_rpc_method_handler(
-                    servicer.ExtractKeywords,
-                    request_deserializer=modelx__pb2.ExtractKeywordsRequest.FromString,
-                    response_serializer=modelx__pb2.ExtractKeywordsReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -243,33 +226,6 @@ class Modelx(object):
             '/model.Modelx/CalcSimilarityScore',
             modelx__pb2.SimilarityRequest.SerializeToString,
             modelx__pb2.SimilarityReply.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def ExtractKeywords(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/model.Modelx/ExtractKeywords',
-            modelx__pb2.ExtractKeywordsRequest.SerializeToString,
-            modelx__pb2.ExtractKeywordsReply.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1,4 +1,4 @@
-.PHONY: target local run pb test clean sample run-sample modelx goods
+.PHONY: target local run pb test clean  modelx
 
 # build linux binary.
 target:
@@ -14,12 +14,12 @@ local:
 
 # execute program in local.
 run: local
-	cd output && ./bin/searcher serve -e 127.0.0.1:9200 -m paraphrase-multilingual-MiniLM-L12-v2
+	cd output && ./bin/searcher -e http://clotho-es-serving-tokyo.test-spatio-inc.com -m ./local_models/paraphrase-multilingual-MiniLM-L12-v2
 
 modelx:
 	rm -rf output/modelx && \
 	cp -r modelx output/ && \
-	(cd output && python ./modelx/server.py --model_path paraphrase-multilingual-MiniLM-L12-v2)
+	(cd output && python ./modelx/server.py --model_path ./local_models/paraphrase-multilingual-MiniLM-L12-v2)
 
 run-sample:
 	export K8S_SERVICE=clotho-frigga-finder-kr-local && \
