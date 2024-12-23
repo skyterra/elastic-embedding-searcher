@@ -52,6 +52,7 @@ def serve(max_workers: int, is_uds: bool, model_path: str):
 
     logging.info("modelx start at:" + address)
     server.wait_for_termination()
+    server.stop(grace=0)
 
 
 def handle_exit(signum, frame):

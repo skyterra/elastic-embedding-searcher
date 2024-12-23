@@ -13,30 +13,18 @@ class Modelx(modelx_pb2_grpc.ModelxServicer):
         return modelx_pb2.PongReply(code=0)
 
     def GenEmbedding(self, request, context):
-        model = self.models.get(request.model_name)
-        if model is None:
-            return modelx_pb2.EmbeddingReply()
-
-        embedding_vector = model.encode(request.text, show_progress_bar=False)
+        embedding_vector = self.model.encode(request.text, show_progress_bar=False)
         embedding = ",".join(map(str, embedding_vector))
         return modelx_pb2.EmbeddingReply(embedding=embedding)
 
     def GenEmbeddingList(self, request, context):
-        model = self.models.get(request.model_name)
-        if model is None:
-            return modelx_pb2.EmbeddingListReply()
-
-        vector_list = model.encode(request.text_list, show_progress_bar=False)
+        vector_list = self.model.encode(request.text_list, show_progress_bar=False)
         embedding_list = [",".join(map(str, vector)) for vector in vector_list]
         return modelx_pb2.EmbeddingListReply(embedding_list=embedding_list)
 
     def CalcSimilarityScore(self, request, context):
-        model = self.models.get(request.model_name)
-        if model is None:
-            return modelx_pb2.SimilarityReply()
-
-        source_text_embedding = model.encode([request.source_text], show_progress_bar=False)
-        target_texts_embeddings = model.encode(request.target_texts, show_progress_bar=False)
+        source_text_embedding = self.model.encode([request.source_text], show_progress_bar=False)
+        target_texts_embeddings = self.model.encode(request.target_texts, show_progress_bar=False)
 
         # mean pooling score.
         mean_pooling_scores = cosine_similarity(source_text_embedding, target_texts_embeddings)

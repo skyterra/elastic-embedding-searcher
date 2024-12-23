@@ -39,8 +39,7 @@ const BulkDelIndexTemplate = `{"delete": {"_index":"%s", "_id":"%s"}}`
 const QueryNormalTemplate = `
 {
 	"query": %s,
-	"size": %d,	
-	"collapse": {"field": "title.keyword"}
+	"size": %d
 }
 `
 

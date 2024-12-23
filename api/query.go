@@ -21,15 +21,9 @@ func (s *SearcherServer) Query(ctx context.Context, req *pb.QueryRequest) (*pb.Q
 		return nil, err
 	}
 
-	var script string
-	if len(embedding) > elastic.MaxNumberOfDimensions {
-		part1 := modelx_runner.EmbeddingToString(embedding[:elastic.MaxNumberOfDimensions])
-		part2 := modelx_runner.EmbeddingToString(embedding[elastic.MaxNumberOfDimensions:])
-		script = elastic.BuildQueryByEmbedding(part1, part2, req.Size)
-	} else {
-		data := modelx_runner.EmbeddingToString(embedding)
-		script = elastic.BuildQueryByEmbedding(data, "", req.Size)
-	}
+	part1 := modelx_runner.EmbeddingToString(embedding[:len(embedding)/2])
+	part2 := modelx_runner.EmbeddingToString(embedding[len(embedding)/2:])
+	script := elastic.BuildQueryByEmbedding(part1, part2, req.Size)
 
 	records, err := elastic.Query(ctx, req.IndexName, script)
 	if err != nil {
@@ -43,8 +37,9 @@ func (s *SearcherServer) Query(ctx context.Context, req *pb.QueryRequest) (*pb.Q
 
 	for _, record := range records {
 		r := &pb.Record{
-			Id:    record.ID,
-			Score: record.Score,
+			Id:       record.ID,
+			Score:    record.Score,
+			Metadata: make(map[string]string),
 		}
 
 		for k, v := range record.Source.Metadata {

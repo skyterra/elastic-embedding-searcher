@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -68,34 +67,25 @@ func (s *SearcherServer) IndexCsvFile(ctx context.Context, req *pb.IndexCsvReque
 	}
 
 	// generate embedding vector and save to ES.
-	dims := 0
+	dimsPart1, dimsPart2 := 0, 0
 	if len(annotations) > 0 {
 		embeddings, err := modelx_runner.GenEmbeddingList(ctx, annotations)
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate embedding. err:%s", err.Error())
 		}
 
-		dims = len(embeddings[0])
+		dimsPart1 = len(embeddings[0]) / 2
+		dimsPart2 = len(embeddings[0]) - dimsPart1
 
 		for i := 0; i < len(documents); i++ {
-			if len(embeddings[i]) > elastic.MaxNumberOfDimensions {
-				documents[i].EmbeddingPart1 = embeddings[i][:elastic.MaxNumberOfDimensions]
-				documents[i].EmbeddingPart2 = embeddings[i][elastic.MaxNumberOfDimensions:]
-			} else {
-				documents[i].EmbeddingPart1 = embeddings[i]
-			}
+			documents[i].EmbeddingPart1 = embeddings[i][:dimsPart1]
+			documents[i].EmbeddingPart2 = embeddings[i][dimsPart1:]
 		}
 	}
 
 	// reset index if you need.
-	if req.ResetIndex == IndexReset {
-		indexMapping := ""
-		if dims > 0 && dims < elastic.MaxNumberOfDimensions {
-			indexMapping = fmt.Sprintf(elastic.IndexEmbeddingMapping, dims, 0)
-		} else if dims > elastic.MaxNumberOfDimensions {
-			indexMapping = fmt.Sprintf(elastic.IndexEmbeddingMapping, elastic.MaxNumberOfDimensions, dims-elastic.MaxNumberOfDimensions)
-		}
-
+	if req.ResetIndex == IndexReset && len(annotations) > 0 {
+		indexMapping := fmt.Sprintf(elastic.IndexEmbeddingMapping, dimsPart1, dimsPart2)
 		if err = elastic.ResetIndex(ctx, req.IndexName, indexMapping); err != nil {
 			return nil, err
 		}
@@ -116,13 +106,7 @@ func (s *SearcherServer) IndexCsvFile(ctx context.Context, req *pb.IndexCsvReque
 }
 
 // DecodeCsvData decodes base64 encoded CSV data and returns the decoded data and row count.
-func DecodeCsvData(fileData []byte) ([]byte, int, error) {
-	data := make([]byte, base64.StdEncoding.DecodedLen(len(fileData)))
-	_, err := base64.StdEncoding.Decode(data, fileData)
-	if err != nil {
-		return nil, 0, err
-	}
-
+func DecodeCsvData(data []byte) ([]byte, int, error) {
 	// remove BOM.
 	bom := []byte{0xEF, 0xBB, 0xBF}
 	if bytes.HasPrefix(data, bom) {

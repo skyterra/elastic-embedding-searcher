@@ -27,9 +27,9 @@ type BaseDocument struct {
 // From a business perspective, the embedding-related fields are generally ignored in the response.
 type Document struct {
 	BaseDocument
-
-	EmbeddingPart1 []float64              `json:"embedding_part1"`
-	EmbeddingPart2 []float64              `json:"embedding_part2"`
+	
+	EmbeddingPart1 []float64              `json:"embedding_part1"` // for large embedding. greater than 2048 and less than 4096
+	EmbeddingPart2 []float64              `json:"embedding_part2"` // for large embedding. greater than 2048 and less than 4096
 	Metadata       map[string]interface{} `json:"metadata"`
 }
 
