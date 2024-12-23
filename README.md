@@ -1,4 +1,6 @@
-# Semantic Search with Elasticsearch and HuggingFace Embeddings  
+English | [中文](README_ZH.md)
+
+# Semantic Search with Elasticsearch and HuggingFace Model Embeddings  
 
 This project enables efficient semantic search by combining Elasticsearch with embeddings generated using HuggingFace models.  
 
