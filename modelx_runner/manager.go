@@ -33,7 +33,7 @@ type ModelXManager struct {
 
 // fork starts the ModelX process and waits for readiness.
 func (m *ModelXManager) fork() error {
-	python := "/Users/yaoqinghui/py-fox-search/bin/python"
+	python := "python"
 
 	// fork modelx process. it is too slow...
 	cmd := exec.Command(python, m.cmdPath, "--max_workers", strconv.Itoa(m.workers), "--uds", "True", "--model_path", m.modelPath)
