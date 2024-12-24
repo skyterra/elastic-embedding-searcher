@@ -38,9 +38,9 @@ deps:
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	@echo "all dependencies installed."
 
-# TODO make an example for fine-tuning in future.
+# fine-tuning model.
 ft:
-	python ./modelx/fine_tuning.py --dataset ./dataset/example.csv --model ./local_models/paraphrase-multilingual-MiniLM-L12-v2 --version v1
+	python ./modelx/fine_tuning.py --dataset ./dataset/paraphrase-multilingual-minilm-l12-v2_dataset.csv --model ./output/local_models/paraphrase-multilingual-MiniLM-L12-v2 --version v1
 
 # TODO write a command to download model from hugging face.
 # Download the model from Hugging Face and save it to the ./output/local_models directory to save startup time and avoid the modelx timeout (10s).
