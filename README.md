@@ -34,6 +34,12 @@ make deps
 make run
 ```
 
+- Upload the CSV file, generate embeddings, and then sync to Elasticsearch.
+![alt text](upload.png)
+
+- Query by semantic.
+![alt text](query.png)
+
 - Fine-tuning model
 ```bash
 # python ./modelx/fine_tuning.py --dataset ./dataset/paraphrase-multilingual-minilm-l12-v2_dataset.csv --model ./output/local_models/paraphrase-multilingual-MiniLM-L12-v2 --version v1
