@@ -10,4 +10,23 @@
 
 该仓库非常适合用于构建文档搜索引擎、推荐系统和知识管理工具等应用。  
 
-立即开始，实现适合您需求的前沿语义搜索！  
+立即开始，实现适合您需求的前沿语义搜索！
+
+## 依赖
+go ~> 1.22
+python ~> 3.12
+protoc ~> 25.3
+
+## 使用方法
+- 安装依赖：
+```bash
+make deps
+```
+
+- 启动语义搜索应用
+```bash
+# ./bin/searcher -e http://127.0.0.1:9200 -m ./local_models/paraphrase-multilingual-MiniLM-L12-v2
+# -e 用于指定 Elasticsearch 地址。
+# -m 用于指定模型。没有相对路径意味着从 HuggingFace 加载。
+make run
+```

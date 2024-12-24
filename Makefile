@@ -26,6 +26,18 @@ pb:
     protoc -I=./pb --go_out=./pb ./pb/*.proto && \
     protoc -I=./pb --go-grpc_out=./pb ./pb/*.proto
 
+deps:
+	@echo "installing dependencies..."
+	@which go > /dev/null || (echo "Go is not installed. Please install Go from https://golang.org/dl/" && exit 1)
+	@which python > /dev/null || (echo "Python is not installed. Please install Python from https://www.python.org/downloads/" && exit 1)
+	@which protoc > /dev/null || (echo "protoc is not installed. Please install Protoc from https://github.com/protocolbuffers/protobuf/releases" && exit 1)
+	@python -m pip install --upgrade pip
+	@pip install grpcio-tools
+	@pip install -r requirements.txt
+	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	@echo "all dependencies installed."
+
 # TODO make an example for fine-tuning in future.
 ft:
 	python ./modelx/fine_tuning.py --dataset ./dataset/example.csv --model ./local_models/paraphrase-multilingual-MiniLM-L12-v2 --version v1

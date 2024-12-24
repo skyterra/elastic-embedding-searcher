@@ -13,3 +13,24 @@ This project enables efficient semantic search by combining Elasticsearch with e
 This repository is ideal for building applications such as document search engines, recommendation systems, and knowledge management tools.  
 
 Get started quickly to implement cutting-edge semantic search tailored to your use case.  
+
+## Dependencies
+- go ~> 1.22
+- python ~> 3.12
+- protoc ~> 25.3
+
+## Usage
+- Install Dependencies
+   Ensure all required tools and libraries are installed:
+```bash
+make deps
+```
+
+- Start the Semantic Search Application
+```bash
+# ./bin/searcher -e http://127.0.0.1:9200 -m ./local_models/paraphrase-multilingual-MiniLM-L12-v2
+# -e to specific elasticsearch address.
+# -m to specific model. no relative path means that loading from hugging-face.
+make run
+
+```
