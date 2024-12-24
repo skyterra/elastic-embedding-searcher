@@ -31,6 +31,14 @@ make deps
 make run
 ```
 
+- 模型微调
+```bash
+# python ./modelx/fine_tuning.py --dataset ./dataset/paraphrase-multilingual-minilm-l12-v2_dataset.csv --model ./output/local_models/paraphrase-multilingual-MiniLM-L12-v2 --version v1
+# --dataset 指定微调数据集.
+# --model 指定模型.
+make ft
+```
+
 ```text
 我是一只快乐的程序猿
 

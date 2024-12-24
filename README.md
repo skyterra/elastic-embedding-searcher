@@ -34,6 +34,14 @@ make deps
 make run
 ```
 
+- Fine-tuning model
+```bash
+# python ./modelx/fine_tuning.py --dataset ./dataset/paraphrase-multilingual-minilm-l12-v2_dataset.csv --model ./output/local_models/paraphrase-multilingual-MiniLM-L12-v2 --version v1
+# --dataset specific the fine-tuning dataset.
+# --model specific model you want to fine-tuning.
+make ft
+```
+
 ```text
 I am a happy programming monkey.
 
