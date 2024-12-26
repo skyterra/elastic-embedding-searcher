@@ -14,6 +14,9 @@ This repository is ideal for building applications such as document search engin
 
 Get started quickly to implement cutting-edge semantic search tailored to your use case.  
 
+## Architecture
+![Architecture](architecture.png)
+
 ## Dependencies
 - go ~> 1.22
 - python ~> 3.12
@@ -35,10 +38,10 @@ make run
 ```
 
 - Upload the CSV file, generate embeddings, and then sync to Elasticsearch.
-![alt text](upload.png)
+![upload csv file](upload.png)
 
 - Query by semantic.
-![alt text](query.png)
+![query](query.png)
 
 - Fine-tuning model
 ```bash
