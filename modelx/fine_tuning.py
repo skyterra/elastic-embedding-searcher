@@ -87,7 +87,7 @@ def fine_tuning(csv_file: str, model_path: str, version: str) -> None:
     training_args = SentenceTransformerTrainingArguments(
         output_dir=".",
         per_device_train_batch_size=16,
-        learning_rate=1e-5,  # 0.00001
+        learning_rate=1e-4,  # 0.00001
         num_train_epochs=2,
         weight_decay=0.01,
         warmup_steps=int(len(train_dataset) / 16 * 0.1),
