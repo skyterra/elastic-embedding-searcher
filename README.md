@@ -50,6 +50,8 @@ make run
 # --model specific model you want to fine-tuning.
 make ft
 ```
+![alt text](fine-tuning.png)
+![loss](loss.png)
 
 ```text
 I am a happy programming monkey.
