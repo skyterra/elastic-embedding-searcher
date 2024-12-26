@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/skyterra/elastic-embedding-searcher/api"
 	"github.com/skyterra/elastic-embedding-searcher/elastic"
-	runner "github.com/skyterra/elastic-embedding-searcher/modelx_runner"
+	runner "github.com/skyterra/elastic-embedding-searcher/runner"
 	"github.com/spf13/cobra"
 	"log"
 )

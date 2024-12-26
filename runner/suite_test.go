@@ -1,4 +1,4 @@
-package modelx_runner
+package runner
 
 import (
 	"testing"

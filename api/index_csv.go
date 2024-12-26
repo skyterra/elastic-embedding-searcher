@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/skyterra/elastic-embedding-searcher/elastic"
-	"github.com/skyterra/elastic-embedding-searcher/modelx_runner"
 	pb "github.com/skyterra/elastic-embedding-searcher/pb/searcher"
+	"github.com/skyterra/elastic-embedding-searcher/runner"
 	"io"
 )
 
@@ -69,7 +69,7 @@ func (s *SearcherServer) IndexCsvFile(ctx context.Context, req *pb.IndexCsvReque
 	// generate embedding vector and save to ES.
 	dimsPart1, dimsPart2 := 0, 0
 	if len(annotations) > 0 {
-		embeddings, err := modelx_runner.GenEmbeddingList(ctx, annotations)
+		embeddings, err := runner.GenEmbeddingList(ctx, annotations)
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate embedding. err:%s", err.Error())
 		}
