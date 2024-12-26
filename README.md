@@ -21,6 +21,8 @@ Get started quickly to implement cutting-edge semantic search tailored to your u
 - go ~> 1.22
 - python ~> 3.12
 - protoc ~> 25.3
+- transformers==4.43.3
+- sentence-transformers==3.0.1
 
 ## Usage
 - Install Dependencies
