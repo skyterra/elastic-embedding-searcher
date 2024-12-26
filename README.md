@@ -55,11 +55,11 @@ make ft
 **console output**
 ![alt text](fine-tuning.png)
 
-**learning_rate = 0.00001**
+**learning_rate = 0.00001**  
 ![loss](loss.png)
 
-**learning_rate = 0.0001, look better**
-![alt text](fine-tuning_v1.png)
+**learning_rate = 0.0001**
+![alt text](loss_v1.png)
 
 ```text
 I am a happy programming monkey.
