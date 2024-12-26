@@ -58,7 +58,7 @@ make ft
 **learning_rate = 0.00001**  
 ![loss](loss.png)
 
-**learning_rate = 0.0001**
+**learning_rate = 0.0001**  
 ![alt text](loss_v1.png)
 
 ```text
