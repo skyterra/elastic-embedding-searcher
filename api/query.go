@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/skyterra/elastic-embedding-searcher/elastic"
-	"github.com/skyterra/elastic-embedding-searcher/modelx_runner"
 	pb "github.com/skyterra/elastic-embedding-searcher/pb/searcher"
+	"github.com/skyterra/elastic-embedding-searcher/runner"
 	"strings"
 )
 
@@ -16,13 +16,13 @@ func (s *SearcherServer) Query(ctx context.Context, req *pb.QueryRequest) (*pb.Q
 		return nil, errors.New("query is empty")
 	}
 
-	embedding, err := modelx_runner.GenEmbedding(ctx, text)
+	embedding, err := runner.GenEmbedding(ctx, text)
 	if err != nil {
 		return nil, err
 	}
 
-	part1 := modelx_runner.EmbeddingToString(embedding[:len(embedding)/2])
-	part2 := modelx_runner.EmbeddingToString(embedding[len(embedding)/2:])
+	part1 := runner.EmbeddingToString(embedding[:len(embedding)/2])
+	part2 := runner.EmbeddingToString(embedding[len(embedding)/2:])
 	script := elastic.BuildQueryByEmbedding(part1, part2, req.Size)
 
 	records, err := elastic.Query(ctx, req.IndexName, script)
