@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"github.com/skyterra/clog"
 	"github.com/skyterra/elastic-embedding-searcher/api"
 	"github.com/skyterra/elastic-embedding-searcher/elastic"
+	"github.com/skyterra/elastic-embedding-searcher/helper"
 	runner "github.com/skyterra/elastic-embedding-searcher/runner"
 	"github.com/spf13/cobra"
 	"log"
@@ -17,6 +19,9 @@ var rootCmd = &cobra.Command{
 		if cmd.Name() == "help" || cmd.Name() == "h" {
 			return nil
 		}
+
+		// setup log.
+		clog.SetDefaultOpts(helper.ReadContextTrace, helper.ReadContextModule)
 
 		addr, err := cmd.Flags().GetString("elastic-address")
 		if err != nil {
@@ -34,7 +39,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		// init elastic search without username and password.
-		if err = elastic.Init(addr, "", ""); err != nil {
+		if err = elastic.Dial(addr, "", ""); err != nil {
 			return err
 		}
 
@@ -57,7 +62,7 @@ var rootCmd = &cobra.Command{
 			log.Printf("failed to exec api cleanup. err:%s\n", err.Error())
 		}
 
-		if err := elastic.Cleanup(); err != nil {
+		if err := elastic.Close(); err != nil {
 			log.Printf("failed to exec elastic cleanup. err:%s\n", err.Error())
 		}
 
