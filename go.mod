@@ -10,7 +10,7 @@ require (
 	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/google/uuid v1.6.0
 	github.com/segmentio/kafka-go v0.4.47
-	github.com/skyterra/clog v1.0.3
+	github.com/skyterra/clog v1.0.5
 	github.com/spf13/cobra v1.8.1
 	golang.org/x/net v0.32.0
 	google.golang.org/grpc v1.69.2
@@ -33,6 +33,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241015192408-796eee8c2d53 // indirect
 )
 
-replace (
-	github.com/skyterra/clog v1.0.3 => ../clog
-)
+replace github.com/skyterra/clog v1.0.3 => ../clog

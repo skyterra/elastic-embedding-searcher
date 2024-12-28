@@ -45,8 +45,8 @@ github.com/segmentio/kafka-go v0.4.47/go.mod h1:HjF6XbOKh0Pjlkr5GVZxt6CsjjwnmhVO
 github.com/shurcooL/go v0.0.0-20180423040247-9e1955d9fb6e/go.mod h1:TDJrrUr11Vxrven61rcy3hJMUqaf/CLWYhHNPmT14Lk=
 github.com/shurcooL/httpfs v0.0.0-20181222201310-74dc9339e414/go.mod h1:ZY1cvUeJuFPAdZ/B6v7RHavJWZn2YPVFQ1OSXhCGOkg=
 github.com/shurcooL/vfsgen v0.0.0-20180915214035-33ae1944be3f/go.mod h1:TrYk7fJVaAttu97ZZKrO9UbRa8izdowaMIZcxYMbVaw=
-github.com/skyterra/clog v1.0.3 h1:3gK/lOZfZtHB77xD0dgadUyfeUn0pe3WmJRIw2fC3jU=
-github.com/skyterra/clog v1.0.3/go.mod h1:sKgCSwmNP4/3LB9WiEL5bydsp67/IFm4Uow8LeHtql4=
+github.com/skyterra/clog v1.0.5 h1:eXoWveCgqPNtF+e4PXN572d3fxSEy/n1NvZy+VEPsb8=
+github.com/skyterra/clog v1.0.5/go.mod h1:sKgCSwmNP4/3LB9WiEL5bydsp67/IFm4Uow8LeHtql4=
 github.com/smartystreets/assertions v1.2.0 h1:42S6lae5dvLc7BrLu/0ugRtcFVjoJNMC/N3yZFZkDFs=
 github.com/smartystreets/assertions v1.2.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYlVhC/LOxJk7iOWnoo=
 github.com/smartystreets/goconvey v1.7.2 h1:9RBaZCeXEQ3UselpuwUQHltGVXvdwm6cv1hgR6gDIPg=

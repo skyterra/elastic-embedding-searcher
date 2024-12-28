@@ -1,5 +1,5 @@
 services:
-  # https://developer.confluent.io/confluent-tutorials/kafka-on-docker/?utm_medium=sem&utm_source=google&utm_campaign=ch.sem_br.nonbrand_tp.prs_tgt.dsa_mt.dsa_rgn.apac_lng.eng_dv.all_con.confluent-developer&utm_term=&creative=&device=c&placement=&gad_source=1&gclid=Cj0KCQiAvbm7BhC5ARIsAFjwNHuM9caWbh1hiz7gSG0Lpz1ZjvvhJovVnx2Iil2O-29h5ZLuCIyHDaQaAr-HEALw_wcB
+  # https://developer.confluent.io/confluent-tutorials/kafka-on-docker
   broker:
     image: apache/kafka:latest
     hostname: broker
