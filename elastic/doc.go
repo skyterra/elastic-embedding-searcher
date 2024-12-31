@@ -6,7 +6,7 @@ const (
 	BulkIndex  BulkOperation = 0
 	BulkDelete BulkOperation = 1
 
-	MaxNumberOfDimensions = 2048
+	MaxNumberOfDimensions = 4096
 )
 
 type IDocument interface {
@@ -21,15 +21,15 @@ type BaseDocument struct {
 
 // Document represents a document structure with metadata and large embedding information.
 //
-// large embedding: the dimension of embedding vector greater than MaxNumberOfDimensions.
+// large embedding: the max dimension of embedding vector is 4096.
 //
 // For large document queries, the Document structure is typically used to return results.
 // From a business perspective, the embedding-related fields are generally ignored in the response.
 type Document struct {
 	BaseDocument
-	
-	EmbeddingPart1 []float64              `json:"embedding_part1"` // for large embedding. greater than 2048 and less than 4096
-	EmbeddingPart2 []float64              `json:"embedding_part2"` // for large embedding. greater than 2048 and less than 4096
+
+	EmbeddingPart1 []float64              `json:"embedding_part1"`
+	EmbeddingPart2 []float64              `json:"embedding_part2"`
 	Metadata       map[string]interface{} `json:"metadata"`
 }
 
