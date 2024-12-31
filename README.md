@@ -14,10 +14,15 @@ This repository is ideal for building applications such as document search engin
 
 Get started quickly to implement cutting-edge semantic search tailored to your use case.  
 
+## Architecture
+![Architecture](architecture.png)
+
 ## Dependencies
 - go ~> 1.22
 - python ~> 3.12
 - protoc ~> 25.3
+- transformers==4.43.3
+- sentence-transformers==3.0.1
 
 ## Usage
 - Install Dependencies
@@ -35,10 +40,10 @@ make run
 ```
 
 - Upload the CSV file, generate embeddings, and then sync to Elasticsearch.
-![alt text](upload.png)
+![upload csv file](upload.png)
 
 - Query by semantic.
-![alt text](query.png)
+![query](query.png)
 
 - Kafka Consumer Example  
 Below is an example implementation for consuming messages from Kafka, processing them, and indexing them in Elasticsearch with semantic embeddings.
@@ -132,6 +137,14 @@ func main() {
 # --model specific model you want to fine-tuning.
 make ft
 ```
+**console output**
+![alt text](fine-tuning.png)
+
+**learning_rate = 0.00001**  
+![loss](loss.png)
+
+**learning_rate = 0.0001**  
+![alt text](loss_v1.png)
 
 ```text
 I am a happy programming monkey.
