@@ -7,6 +7,7 @@ import (
 	"github.com/skyterra/clog"
 	"github.com/skyterra/elastic-embedding-searcher/elastic"
 	"github.com/skyterra/elastic-embedding-searcher/helper"
+	"github.com/skyterra/elastic-embedding-searcher/runner"
 	"golang.org/x/net/context"
 	"strings"
 	"sync"
@@ -15,7 +16,7 @@ import (
 
 const (
 	DefaultCapOfCacheMessage = 1024
-	SyncIntervalSec          = 5 // second
+	SyncIntervalSec          = 1 // second
 
 	moduleName = "listener"
 )
@@ -30,7 +31,7 @@ type IConsumer interface {
 	Close() error
 }
 
-type MessageParseFunc func([]byte) (elastic.IDocument, error)
+type MessageParseFunc func([]byte) (*elastic.Document, error)
 
 type MessageListener struct {
 	IndexName      string
@@ -161,7 +162,9 @@ func (l *MessageListener) sync() {
 	}
 
 	handledMessage := make(map[uint64]struct{})
-	documents := make([]elastic.IDocument, 0, len(messages))
+	docs := make([]*elastic.Document, 0, len(messages))
+	annotations := make([]string, 0, len(docs))
+
 	for i := len(messages) - 1; i >= 0; i-- {
 		// remove duplicate message.
 		sign := xxhash.Sum64(messages[i].GetValue())
@@ -176,11 +179,25 @@ func (l *MessageListener) sync() {
 			continue
 		}
 
-		documents = append(documents, document)
+		docs = append(docs, document)
+		annotations = append(annotations, string(messages[i].GetValue()))
 	}
 
-	if len(documents) == 0 {
+	if len(docs) == 0 {
 		return
+	}
+
+	embeddingList, err := runner.GenEmbeddingList(l.ctx, annotations)
+	if err != nil {
+		clog.Warn(l.ctx, "fail to generate embedding list. err:%s", err.Error())
+		return
+	}
+
+	documents := make([]elastic.IDocument, 0, len(docs))
+	for i := 0; i < len(docs); i++ {
+		docs[i].EmbeddingPart1 = embeddingList[i][:len(embeddingList[i])/2]
+		docs[i].EmbeddingPart2 = embeddingList[i][len(embeddingList[i])/2:]
+		documents = append(documents, docs[i])
 	}
 
 	err = elastic.IndexDocuments(l.ctx, l.IndexName, documents)

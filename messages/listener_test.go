@@ -3,9 +3,13 @@ package messages
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/segmentio/kafka-go"
 	"github.com/skyterra/clog"
 	"github.com/skyterra/elastic-embedding-searcher/helper"
+	"github.com/skyterra/elastic-embedding-searcher/runner"
 	"math/rand/v2"
+	"strings"
 	"testing"
 	"time"
 
@@ -57,7 +61,7 @@ func init() {
 	clog.SetDefaultOpts(helper.ReadContextTrace, helper.ReadContextModule)
 }
 
-func MockParseFunc(message []byte) (elastic.IDocument, error) {
+func ParseQuote(message []byte) (*elastic.Document, error) {
 	quote := &QuoteMessage{}
 	err := json.Unmarshal(message, quote)
 	if err != nil {
@@ -77,7 +81,7 @@ func MockParseFunc(message []byte) (elastic.IDocument, error) {
 
 func TestNewMessageListener(t *testing.T) {
 	mockConsumer := &MockConsumer{}
-	listener, err := NewMessageListener("test_index", mockConsumer, MockParseFunc)
+	listener, err := NewMessageListener("test_index", mockConsumer, ParseQuote)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -92,7 +96,7 @@ func TestStartStopMessageListener(t *testing.T) {
 	mockey.Mock(elastic.ExistIndex).Return(true, nil).Build()
 	defer mockey.UnPatchAll()
 
-	listener, err := NewMessageListener("test_index", mockConsumer, MockParseFunc)
+	listener, err := NewMessageListener("test_index", mockConsumer, ParseQuote)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -113,7 +117,7 @@ func TestStartStopMessageListener(t *testing.T) {
 func TestMessageFetch(t *testing.T) {
 	mockConsumer := &MockConsumer{}
 
-	listener, err := NewMessageListener("test_index", mockConsumer, MockParseFunc)
+	listener, err := NewMessageListener("test_index", mockConsumer, ParseQuote)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -154,7 +158,7 @@ func TestMessageSync(t *testing.T) {
 
 	defer mockey.UnPatchAll()
 
-	listener, err := NewMessageListener("test_index", mockConsumer, MockParseFunc)
+	listener, err := NewMessageListener("test_index", mockConsumer, ParseQuote)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -168,5 +172,62 @@ func TestMessageSync(t *testing.T) {
 
 	if len(listener.messages) != 0 {
 		t.Errorf("expected messages to be empty, got %d", len(listener.messages))
+	}
+}
+
+func TestListener(t *testing.T) {
+	err := elastic.Dial("http://localhost:9200", "", "")
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	// start ModelX process.
+	if err = runner.StartModelX(3, "../modelx/server.py", "../output/local_models/paraphrase-multilingual-MiniLM-L12-v2"); err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	consumer := NewKafkaConsumer([]string{"localhost:9092"}, "quotes-test", groupID, kafka.LastOffset)
+	listener, err := NewMessageListener("test_index", consumer, ParseQuote)
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	// the model paraphrase-multilingual-MiniLM-L12-v2 can generate 384 dim embedding vector, so part1 is 192, part2 is 192
+	err = elastic.CreateIndex(context.Background(), "test_index", fmt.Sprintf(elastic.IndexEmbeddingMapping, 192, 192))
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	err = listener.Start()
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	// publish message to Kafka.
+	writer := &kafka.Writer{
+		Addr:  kafka.TCP("localhost:9092"),
+		Topic: "quotes-test",
+	}
+
+	for i := 0; i < len(MessageSet); i++ {
+		err = writer.WriteMessages(context.Background(), kafka.Message{
+			Value: MessageSet[i].GetValue(),
+		})
+
+		if err != nil {
+			t.Errorf("fail to write message. err:%s", err.Error())
+		}
+	}
+
+	time.Sleep(2 * time.Second)
+	listener.Stop()
+
+	doc, err := elastic.QueryDocument(context.Background(), "test_index", "9")
+	if err != nil {
+		t.Fatalf("unexpected err: %v", err)
+	}
+
+	if !strings.Contains(string(MessageSet[8].GetValue()), doc.Metadata["quote"].(string)) {
+		t.Errorf("expected message to be '%s', got %s", string(MessageSet[8].GetValue()), doc.Metadata["quote"].(string))
 	}
 }

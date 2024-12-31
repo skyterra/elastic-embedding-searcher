@@ -11,7 +11,7 @@ const (
 	groupID = "kafka-test"
 )
 
-func TestNewKafkaConsumer(t *testing.T) {
+func TestKafkaConsumer(t *testing.T) {
 	consumer := NewKafkaConsumer([]string{"localhost:9092"}, "quotes-test", groupID, kafka.LastOffset)
 	wg := sync.WaitGroup{}
 	wg.Add(1)
@@ -44,5 +44,4 @@ func TestNewKafkaConsumer(t *testing.T) {
 	}
 
 	wg.Wait()
-
 }

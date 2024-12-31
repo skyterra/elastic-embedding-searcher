@@ -108,6 +108,34 @@ func Query(ctx context.Context, indexName, script string) ([]QueryRecord, error)
 	return query[Document](ctx, indexName, script)
 }
 
+// QueryDocument retrieves a document from the specified Elasticsearch index by its ID.
+func QueryDocument(ctx context.Context, indexName, docID string) (Document, error) {
+	if err := checkClient(); err != nil {
+		return Document{}, err
+	}
+
+	response, err := Client.Get(indexName, docID, Client.Get.WithContext(ctx))
+	if err != nil {
+		return Document{}, err
+	}
+
+	// I always remember to close the body.
+	defer response.Body.Close()
+
+	if response.IsError() {
+		data, _ := io.ReadAll(response.Body)
+		return Document{}, errors.New(string(data))
+	}
+
+	doc := &QueryRecord{}
+	err = json.NewDecoder(response.Body).Decode(doc)
+	if err != nil {
+		return Document{}, err
+	}
+
+	return doc.Source, err
+}
+
 // ExistIndex checks if an Elasticsearch index exists.
 func ExistIndex(ctx context.Context, index string) (bool, error) {
 	if err := checkClient(); err != nil {
